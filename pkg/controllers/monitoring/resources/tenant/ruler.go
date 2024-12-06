@@ -2,6 +2,8 @@ package tenant
 
 import (
 	"fmt"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"strings"
 
 	monitoringv1alpha1 "github.com/kubesphere/whizard/pkg/api/monitoring/v1alpha1"
@@ -135,6 +137,18 @@ func (t *Tenant) createOrUpdateRulerinstance() *monitoringv1alpha1.Ruler {
 			Tenant: t.tenant.Spec.Tenant,
 			// Only set RuleSelectors. The RuleNamespaceSelector is nil and will use the ruler's namespace
 			RuleSelectors: ruleSelectors,
+			CommonSpec: monitoringv1alpha1.CommonSpec{
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceCPU:    resource.MustParse("100m"),
+						corev1.ResourceMemory: resource.MustParse("100Mi"),
+					},
+					Limits: corev1.ResourceList{
+						corev1.ResourceCPU:    resource.MustParse("1"),
+						corev1.ResourceMemory: resource.MustParse("1Gi"),
+					},
+				},
+			},
 		},
 	}
 }

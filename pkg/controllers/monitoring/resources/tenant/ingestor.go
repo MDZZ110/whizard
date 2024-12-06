@@ -2,6 +2,8 @@ package tenant
 
 import (
 	"fmt"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/api/resource"
 	"reflect"
 	"strconv"
 	"strings"
@@ -314,6 +316,18 @@ func (t *Tenant) createIngesterInstance(name string, tenant *monitoringv1alpha1.
 		},
 		Spec: monitoringv1alpha1.IngesterSpec{
 			Tenants: []string{tenant.Spec.Tenant},
+			CommonSpec: monitoringv1alpha1.CommonSpec{
+				Resources: corev1.ResourceRequirements{
+					Requests: corev1.ResourceList{
+						corev1.ResourceCPU:    resource.MustParse("100m"),
+						corev1.ResourceMemory: resource.MustParse("200Mi"),
+					},
+					Limits: corev1.ResourceList{
+						corev1.ResourceCPU:    resource.MustParse("4"),
+						corev1.ResourceMemory: resource.MustParse("16Gi"),
+					},
+				},
+			},
 		},
 	}
 }
